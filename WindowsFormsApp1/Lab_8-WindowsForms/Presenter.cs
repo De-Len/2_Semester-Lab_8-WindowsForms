@@ -4,13 +4,16 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Lab_8_WindowsForms
 {
     internal class Presenter
     {
-        private List<string> _created, _deleted, _replaced;
-        private IView _iView;
+        List<string> createdFiles = new List<string>();
+        List<string> deletedFiles = new List<string>();
+        List<string> replacedFiles = new List<string>();
+        public IView _iView;
         private View _view;
         private Model _model;
 
@@ -18,62 +21,65 @@ namespace Lab_8_WindowsForms
         {
             _iView = newView;
             _model = new Model();
-            _iView.SyncFirstDirectory += new EventHandler<EventArgs>(Sync1);
-            _iView.SyncSecondDirectory += new EventHandler<EventArgs>(Sync2);
+            _iView.SyncFirstDirectory += new EventHandler<EventArgs>((sender, e) => Sync(sender, e, DirectoryChoice.FirstDirectory));
+            _iView.SyncSecondDirectory += new EventHandler<EventArgs>((sender, e) => Sync(sender, e, DirectoryChoice.SecondDirectory));
         }
 
-        private void Sync1(object sender, EventArgs e)
+        private void Sync(object sender, EventArgs e, DirectoryChoice directoryChoice)
         {
-            string path1 = _iView.TextBox1Text;
-            string path2 = _iView.TextBox2Text;
+            string path1 = _iView.GetPath1InTextBox1Text;
+            string path2 = _iView.GetPath2InTextBox2Text;
 
-            _model.SynsDirectory(path1, path2, DirectoryChoice.FirstDirectory, out _created, out _deleted, out _replaced);
+            List<string> result = _model.SyncDirectory(path1, path2, directoryChoice);
 
-            foreach (string file in _created)
+            if (result[0] == "Ошибка: директории уже синхронизированы") 
             {
-                _iView.Label3Text += $"Файл \"{file}\" создан в первой директории\n";
-
+                MessageBox.Show("Директории уже синхронизированы", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
             }
-            foreach (string file in _deleted)
+            else if (result[0] == "Ошибка: бяка в пути 1 директории")
             {
-                _iView.Label3Text += $"Файл \"{file}\" удалён в первой директории\n";
+                MessageBox.Show("У вас бяка в пути 1 директории", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
             }
-            foreach (string file in _replaced)
+            else if (result[0] == "Ошибка: бяка в пути 2 директории")
             {
-                _iView.Label3Text += $"Файл \"{file}\" изменён в первой директории\n";
+                MessageBox.Show("У вас бяка в пути 2 директории", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
             }
-        }
 
-        private void Sync2(object sender, EventArgs e)
-        {
-            string path1 = _iView.TextBox1Text;
-            string path2 = _iView.TextBox2Text;
+            List<string> createdFiles = new List<string>();
+            List<string> deletedFiles = new List<string>();
+            List<string> replacedFiles = new List<string>();
 
-            _model.SynsDirectory(path1, path2, DirectoryChoice.SecondDirectory, out _created, out _deleted, out _replaced);
-
-            foreach (string file in _created)
+            foreach (string file in result)
             {
-                _iView.Label3Text += $"Файл \"{file}\" создан во второй директории\n";
-
+                if (file.StartsWith("CREATED: "))
+                {
+                    createdFiles.Add(file.Substring(9));
+                }
+                else if (file.StartsWith("DELETED: "))
+                {
+                    deletedFiles.Add(file.Substring(9));
+                }
+                else if (file.StartsWith("REPLACED: "))
+                {
+                    replacedFiles.Add(file.Substring(10));
+                }
             }
-            foreach (string file in _deleted)
+
+            foreach (string fileInList in createdFiles)
             {
-                _iView.Label3Text += $"Файл \"{file}\" удалён во второй директории\n";
+                _iView.LogOutputLabel3Text += $"Файл \"{fileInList}\" создан в {(directoryChoice == DirectoryChoice.FirstDirectory ? "первой" : "второй")} директории \n";
             }
-            foreach (string file in _replaced)
+            foreach (string fileInList in deletedFiles)
             {
-                _iView.Label3Text += $"Файл \"{file}\" изменён во второй директории\n";
+                _iView.LogOutputLabel3Text += $"Файл \"{fileInList}\" удалён в {(directoryChoice == DirectoryChoice.FirstDirectory ? "первой" : "второй")} директории \n";
             }
-        }
-
-        public string GetPath1()
-        {
-            return _iView.TextBox1Text;
-        }
-
-        public string GetPath2()
-        {
-            return _iView.TextBox2Text;
+            foreach (string fileInList in replacedFiles)
+            {
+                _iView.LogOutputLabel3Text += $"Файл \"{fileInList}\" изменён в {(directoryChoice == DirectoryChoice.FirstDirectory ? "первой" : "второй")} директории \n";
+            }
         }
     }
 }

@@ -19,37 +19,27 @@ namespace Lab_8_WindowsForms
             InitializeComponent();
             _presenter = new Presenter(this);
 
-            button1.Click += button1_Click;
-            button2.Click += button2_Click;
+            syncFirstDirectoryButton.Click += syncFirstDirectoryButton_Click;
+            syncSecondDirectoryButton.Click += SyncFirstDirectoryButton_Click;
         }
 
         public event EventHandler<EventArgs> SyncFirstDirectory;
         public event EventHandler<EventArgs> SyncSecondDirectory;
 
-        string IView.GetPath1()
-        {
-            return _presenter.GetPath1();
-        }
-
-        string IView.GetPath2()
-        {
-            return _presenter.GetPath2();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
+        private void syncFirstDirectoryButton_Click(object sender, EventArgs e)
         {
             // Получение данных от пользователя (данные директории)
-            string path1 = ((IView)this).GetPath1();
-            string path2 = ((IView)this).GetPath2();
+            string path1 = _presenter._iView.GetPath1InTextBox1Text;
+            string path2 = _presenter._iView.GetPath2InTextBox2Text;
 
             SyncFirstDirectory(sender, e);
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void SyncFirstDirectoryButton_Click(object sender, EventArgs e)
         {
             // Получение данных от пользователя (данные директории)
-            string path1 = ((IView)this).GetPath1();
-            string path2 = ((IView)this).GetPath2();
+            string path1 = _presenter._iView.GetPath1InTextBox1Text;
+            string path2 = _presenter._iView.GetPath2InTextBox2Text;
 
             SyncSecondDirectory(sender, e);
         }

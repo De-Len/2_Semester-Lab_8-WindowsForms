@@ -11,23 +11,44 @@ namespace Lab_8_WindowsForms
 {
     internal class Model
     {
-        public void SynsDirectory(string Path1, string Path2, DirectoryChoice directoryChoice, out List<string> createdFiles, out List<string> deletedFiles, out List<string> replacedFiles)
+        public List<string> SyncDirectory(string Path1, string Path2, DirectoryChoice directoryChoice)
         {
+            List<string> result = new List<string>();
 
-            createdFiles = new List<string>();
-            deletedFiles = new List<string>();
-            replacedFiles = new List<string>();
+            List<string> createdFiles = new List<string>();
+            List<string> deletedFiles = new List<string>();
+            List<string> replacedFiles = new List<string>();
+            List<string> filesPath1;
+            List<string> filesPath2;
 
-            List<string> filesPath1 = Directory.GetFiles(Path1).ToList<string>();
-            List<string> filesPath2 = Directory.GetFiles(Path2).ToList<string>();
+            try
+            {
+                filesPath1 = Directory.GetFiles(Path1).ToList<string>();
+            }
+            catch (Exception)
+            {
+                result.Add("Ошибка: бяка в пути 1 директории");
+                return result;
+            }
+
+            try
+            {
+                filesPath2 = Directory.GetFiles(Path2).ToList<string>();
+            }
+            catch (Exception)
+            {
+                result.Add("Ошибка: бяка в пути 2 директории");
+                return result;
+            }
 
             // Сравниваем имена файлов в директориях
             var fileNames1 = filesPath1.Select(file => Path.GetFileName(file));
             var fileNames2 = filesPath2.Select(file => Path.GetFileName(file));
+
             if (fileNames1.SequenceEqual(fileNames2))
             {
-                MessageBox.Show("Директории уже синхронизированы", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
+                result.Add("Ошибка: директории уже синхронизированы");
+                return result;
             }
 
             // Файлы, которые есть в filesPath1, но нет в filesPath2
@@ -42,69 +63,63 @@ namespace Lab_8_WindowsForms
 
             if (directoryChoice == DirectoryChoice.FirstDirectory)
             {
-                // Копировать недостающие файлы из filesPath2 в filesPath1
-                foreach (string fileName in missingFilesInPath1)
-                {
-                    string dirFile2 = Path.Combine(Path2, fileName);
-                    string dirFile1 = Path.Combine(Path1, fileName);
-                    File.Copy(dirFile2, dirFile1); // Копировать файл из 2 директории в 1
-                    createdFiles.Add(fileName);
-
-                }
-                // Удалить файлы из filesPath1, которых нет в filesPath2
-                foreach (string fileName in missingFilesInPath2)
-                {
-                    string DirFile = Path.Combine(Path1, fileName);
-                    File.Delete(DirFile);
-                    deletedFiles.Add(fileName);
-                }
-
-                // Заменить разные файлы 1 директории файлами 2 директории
-                foreach (string fileName in modifiedFiles)
-                {
-                    string dirFile1 = Path.Combine(Path1, fileName);
-                    string dirFile2 = Path.Combine(Path2, fileName);
-                    File.Delete(dirFile1);
-                    File.Copy(dirFile2, dirFile1);
-                    replacedFiles.Add(fileName);
-                }
+                CopyMissingFiles(missingFilesInPath1, Path2, Path1, createdFiles, "CREATED");
+                DeleteFiles(missingFilesInPath2, Path1, deletedFiles, "DELETED");
+                ReplaceFiles(modifiedFiles, Path2, Path1, replacedFiles, "REPLACED");
             }
-
             else if (directoryChoice == DirectoryChoice.SecondDirectory)
             {
-                // Копировать недостающие файлы из filesPath1 в filesPath2
-                foreach (string fileName in missingFilesInPath2)
-                {
-                    string dirFile1 = Path.Combine(Path1, fileName);
-                    string dirFile2 = Path.Combine(Path2, fileName);
-                    File.Copy(dirFile1, dirFile2); // Копировать файл из 1 директории во 2
-                    createdFiles.Add(fileName);
-                }
+                CopyMissingFiles(missingFilesInPath2, Path1, Path2, createdFiles, "CREATED");
+                DeleteFiles(missingFilesInPath1, Path2, deletedFiles, "DELETED");
+                ReplaceFiles(modifiedFiles, Path1, Path2, replacedFiles, "REPLACED");
+            }
 
-                // Удалить файлы из filesPath2, которых нет в filesPath1
-                foreach (string fileName in missingFilesInPath1)
-                {
-                    string DirFile = Path.Combine(Path2, fileName);
-                    File.Delete(DirFile);
-                    deletedFiles.Add(fileName);
-                }
+            result.AddRange(createdFiles);
+            result.AddRange(deletedFiles);
+            result.AddRange(replacedFiles);
 
-                // Заменить разные файлы 2 директории файлами 1 директории
-                foreach (string fileName in modifiedFiles)
-                {
-                    string dirFile1 = Path.Combine(Path1, fileName);
-                    string dirFile2 = Path.Combine(Path2, fileName);
-                    File.Delete(dirFile2);
-                    File.Copy(dirFile1, dirFile2);
-                    replacedFiles.Add(fileName);
-                }
+            return result;
+        }
+
+        private void CopyMissingFiles(List<string> missingFiles, string sourceDir, string destinationDir, List<string> operationLog, string operationType)
+        {
+            foreach (string fileName in missingFiles)
+            {
+                string sourceFile = Path.Combine(sourceDir, fileName);
+                string destinationFile = Path.Combine(destinationDir, fileName);
+
+                File.Copy(sourceFile, destinationFile, true); // Переписываем файл, если уже существует
+                operationLog.Add($"{operationType}: {fileName}");
             }
         }
 
-        static bool FilesAreEqual(string file1, string file2)
+        private void DeleteFiles(List<string> filesToDelete, string directoryPath, List<string> operationLog, string operationType)
         {
-            byte[] bytes1 = File.ReadAllBytes(file1);
-            byte[] bytes2 = File.ReadAllBytes(file2);
+            foreach (string fileName in filesToDelete)
+            {
+                string filePath = Path.Combine(directoryPath, fileName);
+                File.Delete(filePath);
+                operationLog.Add($"{operationType}: {fileName}");
+            }
+        }
+
+        private void ReplaceFiles(List<string> modifiedFiles, string sourceDir, string destinationDir, List<string> operationLog, string operationType)
+        {
+            foreach (string fileName in modifiedFiles)
+            {
+                string sourceFile = Path.Combine(sourceDir, fileName);
+                string destinationFile = Path.Combine(destinationDir, fileName);
+
+                File.Delete(destinationFile);
+                File.Copy(sourceFile, destinationFile, true); // Переписываем файл, если уже существует
+                operationLog.Add($"{operationType}: {fileName}");
+            }
+        }
+
+        static bool FilesAreEqual(string filePath1, string filePath2)
+        {
+            byte[] bytes1 = File.ReadAllBytes(filePath1);
+            byte[] bytes2 = File.ReadAllBytes(filePath2);
             return bytes1.SequenceEqual(bytes2);
         }
 

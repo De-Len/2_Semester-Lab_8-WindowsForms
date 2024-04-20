@@ -2,17 +2,17 @@
 {
     partial class View
     {
-        public string Label3Text
+        public string LogOutputLabel3Text
         {
             get { return label3.Text; }
             set { label3.Text = value; }
         }
-        public string TextBox1Text
+        public string GetPath1InTextBox1Text
         {
             get { return textBox1.Text; }
             set { textBox1.Text = value; }
         }
-        public string TextBox2Text
+        public string GetPath2InTextBox2Text
         {
             get { return textBox2.Text; }
             set { textBox2.Text = value; }
@@ -49,8 +49,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.syncFirstDirectoryButton = new System.Windows.Forms.Button();
+            this.syncSecondDirectoryButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.label4 = new System.Windows.Forms.Label();
@@ -81,6 +81,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(1169, 31);
             this.textBox1.TabIndex = 2;
+            this.textBox1.Text = "\\\\Mac\\Home\\Desktop\\Директории для теста\\1_Директория";
             // 
             // textBox2
             // 
@@ -88,24 +89,25 @@
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(1169, 31);
             this.textBox2.TabIndex = 3;
+            this.textBox2.Text = "\\\\Mac\\Home\\Desktop\\Директории для теста\\2_Директория";
             // 
-            // button1
+            // syncFirstDirectoryButton
             // 
-            this.button1.Location = new System.Drawing.Point(34, 223);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(352, 208);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Синхронизировать первую директорию на основе второй";
-            this.button1.UseVisualStyleBackColor = true;
+            this.syncFirstDirectoryButton.Location = new System.Drawing.Point(34, 223);
+            this.syncFirstDirectoryButton.Name = "syncFirstDirectoryButton";
+            this.syncFirstDirectoryButton.Size = new System.Drawing.Size(352, 208);
+            this.syncFirstDirectoryButton.TabIndex = 4;
+            this.syncFirstDirectoryButton.Text = "Синхронизировать первую директорию на основе второй";
+            this.syncFirstDirectoryButton.UseVisualStyleBackColor = true;
             // 
-            // button2
+            // syncSecondDirectoryButton
             // 
-            this.button2.Location = new System.Drawing.Point(34, 447);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(352, 208);
-            this.button2.TabIndex = 5;
-            this.button2.Text = "Синхронизировать вторую директорию на основе первой";
-            this.button2.UseVisualStyleBackColor = true;
+            this.syncSecondDirectoryButton.Location = new System.Drawing.Point(34, 447);
+            this.syncSecondDirectoryButton.Name = "syncSecondDirectoryButton";
+            this.syncSecondDirectoryButton.Size = new System.Drawing.Size(352, 208);
+            this.syncSecondDirectoryButton.TabIndex = 5;
+            this.syncSecondDirectoryButton.Text = "Синхронизировать вторую директорию на основе первой";
+            this.syncSecondDirectoryButton.UseVisualStyleBackColor = true;
             // 
             // label3
             // 
@@ -137,8 +139,8 @@
             this.ClientSize = new System.Drawing.Size(1229, 667);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.syncSecondDirectoryButton);
+            this.Controls.Add(this.syncFirstDirectoryButton);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label2);
@@ -157,8 +159,8 @@
         private System.Windows.Forms.Label label2;
         public System.Windows.Forms.TextBox textBox1;
         public System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button syncFirstDirectoryButton;
+        private System.Windows.Forms.Button syncSecondDirectoryButton;
         public System.Windows.Forms.Label label3;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Label label4;
