@@ -8,9 +8,9 @@ namespace Lab_8_WindowsForms
 {
     internal interface IView
     {
-        string LogOutputLabel3Text { get; set; }
-        string GetPath1InTextBox1Text {  get; set; }
-        string GetPath2InTextBox2Text { get; set; }
+        string LogOutput { get; set; }
+        string FirstPath();
+        string SecondPath();
 
         event EventHandler<EventArgs> SyncFirstDirectory;
         event EventHandler<EventArgs> SyncSecondDirectory;

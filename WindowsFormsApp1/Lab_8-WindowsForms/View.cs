@@ -14,6 +14,21 @@ namespace Lab_8_WindowsForms
     {
         private Presenter _presenter;
 
+        string IView.LogOutput
+        {
+            get { return label3.Text; }
+            set { label3.Text = value; }
+        }
+
+        string IView.FirstPath()
+        {
+            return textBox1.Text;
+        }
+        string IView.SecondPath()
+        {
+            return textBox2.Text;
+        }
+
         public View()
         {
             InitializeComponent();
@@ -28,19 +43,11 @@ namespace Lab_8_WindowsForms
 
         private void syncFirstDirectoryButton_Click(object sender, EventArgs e)
         {
-            // Получение данных от пользователя (данные директории)
-            string path1 = _presenter._iView.GetPath1InTextBox1Text;
-            string path2 = _presenter._iView.GetPath2InTextBox2Text;
-
             SyncFirstDirectory(sender, e);
         }
 
         private void SyncFirstDirectoryButton_Click(object sender, EventArgs e)
         {
-            // Получение данных от пользователя (данные директории)
-            string path1 = _presenter._iView.GetPath1InTextBox1Text;
-            string path2 = _presenter._iView.GetPath2InTextBox2Text;
-
             SyncSecondDirectory(sender, e);
         }
 

@@ -27,8 +27,8 @@ namespace Lab_8_WindowsForms
 
         private void Sync(object sender, EventArgs e, DirectoryChoice directoryChoice)
         {
-            string path1 = _iView.GetPath1InTextBox1Text;
-            string path2 = _iView.GetPath2InTextBox2Text;
+            string path1 = _iView.FirstPath();
+            string path2 = _iView.SecondPath();
 
             List<string> result = _model.SyncDirectory(path1, path2, directoryChoice);
 
@@ -70,15 +70,15 @@ namespace Lab_8_WindowsForms
 
             foreach (string fileInList in createdFiles)
             {
-                _iView.LogOutputLabel3Text += $"Файл \"{fileInList}\" создан в {(directoryChoice == DirectoryChoice.FirstDirectory ? "первой" : "второй")} директории \n";
+                _iView.LogOutput += $"Файл \"{fileInList}\" создан в {(directoryChoice == DirectoryChoice.FirstDirectory ? "первой" : "второй")} директории \n";
             }
             foreach (string fileInList in deletedFiles)
             {
-                _iView.LogOutputLabel3Text += $"Файл \"{fileInList}\" удалён в {(directoryChoice == DirectoryChoice.FirstDirectory ? "первой" : "второй")} директории \n";
+                _iView.LogOutput += $"Файл \"{fileInList}\" удалён в {(directoryChoice == DirectoryChoice.FirstDirectory ? "первой" : "второй")} директории \n";
             }
             foreach (string fileInList in replacedFiles)
             {
-                _iView.LogOutputLabel3Text += $"Файл \"{fileInList}\" изменён в {(directoryChoice == DirectoryChoice.FirstDirectory ? "первой" : "второй")} директории \n";
+                _iView.LogOutput += $"Файл \"{fileInList}\" изменён в {(directoryChoice == DirectoryChoice.FirstDirectory ? "первой" : "второй")} директории \n";
             }
         }
     }

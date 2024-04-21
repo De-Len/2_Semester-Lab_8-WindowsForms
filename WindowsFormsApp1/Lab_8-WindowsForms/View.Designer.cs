@@ -2,21 +2,6 @@
 {
     partial class View
     {
-        public string LogOutputLabel3Text
-        {
-            get { return label3.Text; }
-            set { label3.Text = value; }
-        }
-        public string GetPath1InTextBox1Text
-        {
-            get { return textBox1.Text; }
-            set { textBox1.Text = value; }
-        }
-        public string GetPath2InTextBox2Text
-        {
-            get { return textBox2.Text; }
-            set { textBox2.Text = value; }
-        }
 
         /// <summary>
         /// Обязательная переменная конструктора.
